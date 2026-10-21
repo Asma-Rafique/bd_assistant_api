@@ -109,12 +109,6 @@ GEM
     factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
-    ffi (1.17.4-aarch64-linux-gnu)
-    ffi (1.17.4-aarch64-linux-musl)
-    ffi (1.17.4-arm-linux-gnu)
-    ffi (1.17.4-arm-linux-musl)
-    ffi (1.17.4-x86_64-linux-gnu)
-    ffi (1.17.4-x86_64-linux-musl)
     fiber-storage (1.0.1)
     fugit (1.14.0)
       et-orbi (~> 1.4)
@@ -127,9 +121,7 @@ GEM
       logger
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    image_processing (1.14.0)
-      mini_magick (>= 4.9.5, < 6)
-      ruby-vips (>= 2.0.17, < 3)
+    image_processing (2.2.0)
     interactor (3.2.0)
       ostruct
     io-console (0.9.4)
@@ -163,8 +155,6 @@ GEM
       net-pop
       net-smtp
     marcel (1.2.1)
-    mini_magick (5.4.0)
-      logger
     mini_mime (1.1.5)
     minitest (6.0.6)
       drb (~> 2.0)
@@ -314,9 +304,6 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-next-core (1.2.1)
     ruby-progressbar (1.13.0)
-    ruby-vips (2.3.0)
-      ffi (~> 1.12)
-      logger
     securerandom (0.4.1)
     solid_cable (4.1.0)
       actioncable (>= 7.2)
@@ -377,7 +364,7 @@ DEPENDENCIES
   debug
   factory_bot_rails
   graphql
-  image_processing (~> 1.2)
+  image_processing (~> 2.2)
   interactor
   kamal
   pg (~> 1.1)
