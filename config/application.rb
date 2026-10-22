@@ -41,7 +41,7 @@ module BdAssistantApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.time_zone = "UTC"
-
+    config.active_storage.variant_processor = :disabled
     config.x.frontend_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173")
     config.x.cors_allowed_origins = ENV.fetch("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(",").map(&:strip)
     config.generators do |g|
