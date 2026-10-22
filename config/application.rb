@@ -40,5 +40,14 @@ module BdAssistantApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.time_zone = "UTC"
+
+    config.x.frontend_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173")
+    config.x.cors_allowed_origins = ENV.fetch("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(",").map(&:strip)
+    config.generators do |g|
+      g.orm :active_record
+      g.test_framework :rspec, fixtures: false, view_specs: false, helper_specs: false, routing_specs: false
+      g.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
   end
 end
