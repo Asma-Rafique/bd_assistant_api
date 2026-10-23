@@ -1,0 +1,14 @@
+"""
+Read operations
+"""
+type Query {
+  """
+  Returns "ok" when the API is up. Needs no login.
+  """
+  apiStatus: String!
+
+  """
+  Returns "pong" when you are logged in. Temporary: B4 replaces it with currentUser.
+  """
+  protectedPing: String!
+}
