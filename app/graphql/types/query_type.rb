@@ -2,6 +2,9 @@
 
 module Types
   class QueryType < Types::BaseObject
-    # Add root-level fields here.
+    description "Read operations"
+
+    field :api_status, resolver: Queries::System::ApiStatus
+    field :protected_ping, resolver: Queries::System::ProtectedPing
   end
 end

@@ -2,5 +2,6 @@
 
 module Types
   class MutationType < Types::BaseObject
+    description "Write operations"
   end
 end
