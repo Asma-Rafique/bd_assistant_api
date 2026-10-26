@@ -34,3 +34,5 @@ en:
     not_found: "We couldn't find what you were looking for."
     internal: "Something went wrong on our side. Please try again."
     malformed_request: "The request was invalid or badly formatted."
+    validation_failed: "Please check the highlighted fields."
+

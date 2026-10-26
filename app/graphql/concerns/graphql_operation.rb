@@ -26,4 +26,10 @@ module GraphqlOperation
   private
 
   def current_user = context[:current_user]
+
+  def value_or_raise!(result)
+    raise GraphqlErrors.from_service_error(result.error) if result.failure?
+
+    result.value
+  end
 end
