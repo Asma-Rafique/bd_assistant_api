@@ -10,7 +10,7 @@ RSpec.describe ApplicationService do
       validates :first_name, presence: true
     end)
 
-    stub_const("Greeter", Class.new(described_class) do
+    stub_const("Greeter", Class.new(ApplicationService) do
       def initialize(name:)
         @name = name
       end
