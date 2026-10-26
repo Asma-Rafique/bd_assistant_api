@@ -19,6 +19,10 @@ module GraphqlErrors
     build(I18n.t("errors.internal"), :internal)
   end
 
+  def from_service_error(error)
+    build(error.message, error.code, fieldErrors: error.field_errors.presence)
+  end
+
   def build(message, code, **extensions)
     GraphQL::ExecutionError.new(
       message,
