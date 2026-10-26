@@ -1,8 +1,7 @@
-# Be sure to restart your server when you modify this file.
-
-# Configure parameters to be partially matched (e.g. passw matches password) and filtered from the log file.
-# Use this to limit dissemination of sensitive information.
-# See the ActiveSupport::ParameterFilter documentation for supported notations and behaviors.
+# Keeps credentials and personal data out of logs and error reports. A client
+# can type secrets straight into the GraphQL query text, so the whole query,
+# its variables and multipart operations are filtered; operationName stays.
 Rails.application.config.filter_parameters += %i[
+  query variables operations
   passw email secret token _key crypt salt certificate otp ssn cvv cvc
 ]
