@@ -116,6 +116,16 @@ type Query {
   The signed-in user
   """
   currentUser: User!
+
+  """
+  Returns one user. Super admins may fetch anyone; team members only themselves.
+  """
+  fetchUser(
+    """
+    The user to fetch
+    """
+    id: ID!
+  ): User!
 }
 
 """

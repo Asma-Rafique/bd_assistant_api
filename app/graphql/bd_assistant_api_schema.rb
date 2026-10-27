@@ -21,6 +21,9 @@ class BdAssistantApiSchema < GraphQL::Schema
   # A record lookup like User.find(99) failed: tell the client "not found".
   rescue_from(ActiveRecord::RecordNotFound) { raise GraphqlErrors.not_found }
 
+  # A policy said no: the caller is signed in but not allowed.
+  rescue_from(ActionPolicy::Unauthorized) { raise GraphqlErrors.forbidden }
+
   rescue_from(ActiveRecord::RecordInvalid) do |error|
     raise GraphqlErrors.from_service_error(ServiceError.from_record(error.record))
   end
