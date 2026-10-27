@@ -5,6 +5,6 @@ module Types
     description "Read operations"
 
     field :api_status, resolver: Queries::System::ApiStatus
-    field :protected_ping, resolver: Queries::System::ProtectedPing
+    field :current_user, resolver: Queries::Users::CurrentUser
   end
 end

@@ -35,4 +35,15 @@ en:
     internal: "Something went wrong on our side. Please try again."
     malformed_request: "The request was invalid or badly formatted."
     validation_failed: "Please check the highlighted fields."
+    invalid_credentials: "Invalid email or password."
+    sign_in_blocked: "This account can no longer sign in. Please contact an admin."
+  auth:
+    logged_out: "You have been logged out."
+  activerecord:
+    errors:
+      messages:
+        password_missing_uppercase: "must include an uppercase letter"
+        password_missing_lowercase: "must include a lowercase letter"
+        password_missing_special: "must include a special character"
+        password_too_long: "is too long (maximum is %{count} bytes)"
 
