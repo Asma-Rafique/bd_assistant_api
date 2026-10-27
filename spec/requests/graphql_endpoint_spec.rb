@@ -12,6 +12,35 @@ RSpec.describe "POST /graphql" do
     expect(json.dig("errors", 0, "extensions", "code")).to eq("BAD_REQUEST")
   end
 
+  describe "authentication" do
+    let(:query) { { query: "{ currentUser { id } }" } }
+    let(:session) { create(:session) }
+
+    def post_graphql(headers = {})
+      post "/graphql", params: query.to_json, headers: { "Content-Type" => "application/json", **headers }
+    end
+
+    it "accepts a bearer token" do
+      post_graphql("Authorization" => "Bearer #{session.token}")
+
+      expect(json.dig("data", "currentUser", "id")).to eq(session.user_id.to_s)
+    end
+
+    it "treats an unknown token as signed out" do
+      post_graphql("Authorization" => "Bearer not-a-real-token")
+
+      expect(json.dig("errors", 0, "extensions", "code")).to eq("UNAUTHENTICATED")
+    end
+
+    it "treats an archived user's token as signed out" do
+      session.user.update!(archived_at: Time.current)
+
+      post_graphql("Authorization" => "Bearer #{session.token}")
+
+      expect(json.dig("errors", 0, "extensions", "code")).to eq("UNAUTHENTICATED")
+    end
+  end
+
   describe "CORS" do
     it "allows the configured frontend origin" do
       options "/graphql", headers: { "Origin" => allowed_origin, "Access-Control-Request-Method" => "POST",
