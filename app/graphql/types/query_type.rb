@@ -6,5 +6,6 @@ module Types
 
     field :api_status, resolver: Queries::System::ApiStatus
     field :current_user, resolver: Queries::Users::CurrentUser
+    field :fetch_user, resolver: Queries::Users::FetchUser
   end
 end
