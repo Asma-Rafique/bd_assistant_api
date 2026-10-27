@@ -1,8 +1,12 @@
 module GraphqlHelper
-  # Runs the real schema, signed out. B4 adds an `as:` option to run as a user.
-  def execute_graphql(query, variables: {})
+  # Runs the real schema. Pass `as:` (a user) or `session:` to run as a
+  # signed-in caller; nothing about authentication is stubbed.
+  def execute_graphql(query, variables: {}, as: nil, session: nil)
+    session ||= create(:session, user: as) if as
     BdAssistantApiSchema.execute(
-      query, variables:, context: { current_user: nil, ip_address: "127.0.0.1" }
+      query,
+      variables:,
+      context: { current_session: session, current_user: session&.user, ip_address: "127.0.0.1" }
     ).to_h
   end
 

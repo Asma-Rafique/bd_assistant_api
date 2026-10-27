@@ -1,5 +1,7 @@
 # The API's only HTTP entry point: turns a POST /graphql into one schema call.
 class GraphqlController < ApplicationController
+  include ActionController::HttpAuthentication::Token::ControllerMethods
+
   before_action :set_current_request_details
   rescue_from JSON::ParserError, with: :render_malformed_variables
 
@@ -8,8 +10,7 @@ class GraphqlController < ApplicationController
       params[:query],
       variables: graphql_variables,
       operation_name: params[:operationName],
-      # B4 replaces nil with the user found from the Authorization header.
-      context: { current_user: nil, ip_address: Current.ip_address }
+      context: { current_session: Current.session, current_user: Current.user, ip_address: Current.ip_address }
     )
 
     render json: result
@@ -20,6 +21,17 @@ class GraphqlController < ApplicationController
   def set_current_request_details
     Current.ip_address = request.remote_ip
     Current.user_agent = request.user_agent
+    Current.session = authenticated_session
+  end
+
+  # A missing, unknown, expired or blocked token counts as signed out, so each
+  # operation decides for itself whether it needs a signed-in user.
+  def authenticated_session
+    session = authenticate_with_http_token { |token, _options| Session.find_by_token(token) }
+    return unless session&.user&.can_sign_in?
+
+    session.record_activity!
+    session
   end
 
   def render_malformed_variables

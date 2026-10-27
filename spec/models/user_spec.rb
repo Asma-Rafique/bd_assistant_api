@@ -1,0 +1,37 @@
+require "rails_helper"
+
+RSpec.describe User do
+  it "stores the email trimmed and in lower case" do
+    user = create(:user, email: "  Sam@Example.COM ")
+
+    expect(user.email).to eq("sam@example.com")
+  end
+
+  it "rejects a second account with the same email in another letter case" do
+    create(:user, email: "sam@example.com")
+    user = build(:user, email: "SAM@example.com")
+
+    expect(user).not_to be_valid
+    expect(user.errors[:email]).to include("has already been taken")
+  end
+
+  it "rejects a weak password with one message per broken rule" do
+    user = build(:user, password: "short")
+
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(
+      "is too short (minimum is 8 characters)", "must include an uppercase letter", "must include a special character"
+    )
+  end
+
+  it "never stores the plain password" do
+    user = create(:user, password: "Passw0rd!")
+
+    expect(user.password_digest).not_to include("Passw0rd!")
+    expect(user.authenticate("Passw0rd!")).to eq(user)
+  end
+
+  it "cannot sign in once archived" do
+    expect(build(:user, :archived)).not_to be_can_sign_in
+  end
+end

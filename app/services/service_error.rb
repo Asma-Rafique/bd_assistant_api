@@ -1,7 +1,11 @@
 # An expected business failure. The code becomes the GraphQL error's
 # extensions.code, so it is part of the API contract.
 class ServiceError < Data.define(:code, :message, :field_errors)
-  CODES = %i[validation_failed].freeze
+  CODES = %i[
+    invalid_credentials
+    sign_in_blocked
+    validation_failed
+  ].freeze
 
   def self.from_record(record)
     new(
