@@ -34,4 +34,23 @@ RSpec.describe User do
   it "cannot sign in once archived" do
     expect(build(:user, :archived)).not_to be_can_sign_in
   end
+
+  describe "#update_password" do
+    let(:user) { create(:user) }
+
+    it "signs out every session except the one it keeps" do
+      kept = create(:session, user:)
+      other = create(:session, user:)
+
+      expect(user.update_password(password: "N3w-passw0rd", password_confirmation: "N3w-passw0rd", keep_session: kept))
+        .to be(true)
+      expect(user.sessions).to contain_exactly(kept)
+      expect(Session.exists?(other.id)).to be(false)
+    end
+
+    it "rejects a confirmation that doesn't match" do
+      expect(user.update_password(password: "N3w-passw0rd", password_confirmation: "N3w-passw0rd-typo")).to be(false)
+      expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+    end
+  end
 end

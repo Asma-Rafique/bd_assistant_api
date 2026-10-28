@@ -17,4 +17,14 @@ class User < ApplicationRecord
 
   def archived? = archived_at.present?
   def can_sign_in? = !archived?
+
+  # Changes the password and signs out every other device, so a stolen token
+  # stops working along with the old password.
+  def update_password(password:, password_confirmation:, keep_session: nil)
+    transaction do
+      update(password:, password_confirmation:).tap do |updated|
+        sessions.where.not(id: keep_session).delete_all if updated
+      end
+    end
+  end
 end

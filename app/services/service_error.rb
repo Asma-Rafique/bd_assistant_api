@@ -3,6 +3,7 @@
 class ServiceError < Data.define(:code, :message, :field_errors)
   CODES = %i[
     invalid_credentials
+    invalid_token
     sign_in_blocked
     validation_failed
   ].freeze

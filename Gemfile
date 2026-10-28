@@ -15,10 +15,9 @@ gem "puma", ">= 5.0"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
 
-# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
+# Use the database-backed adapters for Rails.cache and Action Cable
 gem "solid_cable"
 gem "solid_cache"
-gem "solid_queue"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -39,7 +38,7 @@ gem "graphql", "~> 2.6" # the GraphQL API
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors", "~> 3.0"
-
+gem "sidekiq", "~> 8.1" # background jobs, such as sending email; needs Redis
 gem "strong_migrations", "~> 2.8"
 
 group :development, :test do
