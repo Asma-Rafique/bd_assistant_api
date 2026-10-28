@@ -36,9 +36,20 @@ en:
     malformed_request: "The request was invalid or badly formatted."
     validation_failed: "Please check the highlighted fields."
     invalid_credentials: "Invalid email or password."
+    current_password_invalid: "Current password is incorrect."
+    invalid_token: "This link is invalid or has expired. Please request a new one."
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
   auth:
     logged_out: "You have been logged out."
+    password_reset_requested: "If an account exists for that email, we've sent a link to reset the password."
+  user_mailer:
+    password_reset:
+      subject: "Reset your BD Assistant password"
+      greeting: "Hi %{name},"
+      intro: "Someone asked to reset the password for your account. Use the link below to choose a new one."
+      button: "Reset my password"
+      expiry: "The link works for 15 minutes, and only once."
+      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."      
   activerecord:
     errors:
       messages:
