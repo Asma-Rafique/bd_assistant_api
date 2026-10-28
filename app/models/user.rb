@@ -12,6 +12,8 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, length: { maximum: EMAIL_MAX_LENGTH },
                     format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, password_strength: true, allow_nil: true
+  scope :archived, -> { where.not(archived_at: nil) }
+  scope :not_archived, -> { where(archived_at: nil) }
 
   def full_name = [first_name, last_name].compact.join(" ").presence
 
@@ -26,5 +28,17 @@ class User < ApplicationRecord
         sessions.where.not(id: keep_session).delete_all if updated
       end
     end
+  end
+
+  # Signs the user out everywhere, so an archived account loses access at once.
+  def archive!
+    transaction do
+      update!(archived_at: Time.current)
+      sessions.delete_all
+    end
+  end
+
+  def unarchive!
+    update!(archived_at: nil)
   end
 end
