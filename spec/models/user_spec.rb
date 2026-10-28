@@ -53,4 +53,26 @@ RSpec.describe User do
       expect(user.errors[:password_confirmation]).to include("doesn't match Password")
     end
   end
+
+  describe "#archive!" do
+    it "blocks sign-in and signs out every session" do
+      user = create(:user)
+      create_list(:session, 2, user:)
+
+      user.archive!
+
+      expect(user).not_to be_can_sign_in
+      expect(user.sessions).to be_empty
+    end
+  end
+
+  describe "#unarchive!" do
+    it "lets the user sign in again" do
+      user = create(:user, :archived)
+
+      user.unarchive!
+
+      expect(user).to be_can_sign_in
+    end
+  end
 end

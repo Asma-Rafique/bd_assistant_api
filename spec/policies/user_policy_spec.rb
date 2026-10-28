@@ -17,6 +17,38 @@ RSpec.describe UserPolicy, type: :policy do
       let(:user) { super_admin }
     end
   end
+  describe_rule :index? do
+    failed "for a team member"
+
+    succeed "for a super admin" do
+      let(:user) { super_admin }
+    end
+  end
+
+  describe_rule :update? do
+    failed "for someone else's account"
+
+    succeed "for their own account" do
+      let(:record) { user }
+    end
+
+    succeed "for a super admin editing anyone" do
+      let(:user) { super_admin }
+    end
+  end
+
+  describe_rule :manage? do
+    failed "for a team member"
+
+    succeed "for a super admin managing another user" do
+      let(:user) { super_admin }
+    end
+
+    failed "for a super admin's own account" do
+      let(:user) { super_admin }
+      let(:record) { super_admin }
+    end
+  end
 
   describe "relation scope" do
     let!(:team_member) { create(:user) }
