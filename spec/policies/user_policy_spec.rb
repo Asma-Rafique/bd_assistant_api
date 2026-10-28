@@ -50,6 +50,29 @@ RSpec.describe UserPolicy, type: :policy do
     end
   end
 
+  describe_rule :invite? do
+    failed "for a team member"
+
+    succeed "for a super admin" do
+      let(:user) { super_admin }
+    end
+  end
+
+  describe_rule :manage_invitation? do
+    let(:user) { super_admin }
+    let(:record) { build_stubbed(:user, :invited) }
+
+    succeed "for a super admin and a pending invitation"
+
+    failed "once the invitation is accepted" do
+      let(:record) { build_stubbed(:user) }
+    end
+
+    failed "for a team member" do
+      let(:user) { build_stubbed(:user) }
+    end
+  end
+
   describe "relation scope" do
     let!(:team_member) { create(:user) }
     let!(:admin) { create(:user, :super_admin) }

@@ -39,9 +39,24 @@ en:
     current_password_invalid: "Current password is incorrect."
     invalid_token: "This link is invalid or has expired. Please request a new one."
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
+    invitation_count: "Invite between 1 and %{count} email addresses at a time."
+    emails_taken: "These emails already have an account: %{emails}."
   auth:
     logged_out: "You have been logged out."
     password_reset_requested: "If an account exists for that email, we've sent a link to reset the password."
+  invitations:
+    sent:
+      one: "Invitation sent."
+      other: "%{count} invitations sent."
+    deleted: "Invitation deleted."
+  invitation_mailer:
+    invitation:
+      subject: "You're invited to BD Assistant"
+      intro: "You've been invited to join BD Assistant."
+      intro_with_inviter: "%{inviter} invited you to join BD Assistant."
+      instructions: "Use the link below to choose your password and sign in."
+      button: "Accept the invitation"
+      expiry: "The link works for %{days} days."
   user_mailer:
     password_reset:
       subject: "Reset your BD Assistant password"

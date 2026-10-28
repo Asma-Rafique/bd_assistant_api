@@ -41,4 +41,12 @@ RSpec.describe Auth::Login do
     expect(result.error.code).to eq(:sign_in_blocked)
     expect(Session.count).to eq(0)
   end
+
+  it "treats an invited user, who has no password yet, as wrong credentials" do
+    create(:user, :invited, email: "new@example.com")
+
+    result = described_class.call(email: "new@example.com", password: "")
+
+    expect(result.error.code).to eq(:invalid_credentials)
+  end
 end
