@@ -13,5 +13,12 @@ FactoryBot.define do
     trait :archived do
       archived_at { 1.day.ago }
     end
+
+    # Invited but not accepted yet, so no password.
+    trait :invited do
+      password { nil }
+      invitation_sent_at { Time.current }
+      invited_by factory: %i[user super_admin]
+    end
   end
 end
