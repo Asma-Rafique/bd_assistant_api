@@ -12,6 +12,21 @@ RSpec.describe "POST /graphql" do
     expect(json.dig("errors", 0, "extensions", "code")).to eq("BAD_REQUEST")
   end
 
+  it "reads variables sent as a JSON object, as Apollo sends them" do
+    query = "query($t: String!) { validateInvitationToken(token: $t) { valid } }"
+    post "/graphql", params: { query:, variables: { t: "not-a-token" } }.to_json,
+                     headers: { "Content-Type" => "application/json" }
+
+    expect(json).to eq({ "data" => { "validateInvitationToken" => { "valid" => false } } })
+  end
+
+  it "ignores variables that are neither an object nor a JSON string" do
+    post "/graphql", params: { query: "{ apiStatus }", variables: [1, 2] }.to_json,
+                     headers: { "Content-Type" => "application/json" }
+
+    expect(json.dig("data", "apiStatus")).to eq("ok")
+  end
+
   describe "authentication" do
     let(:query) { { query: "{ currentUser { id } }" } }
     let(:session) { create(:session) }
