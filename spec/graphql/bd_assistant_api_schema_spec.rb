@@ -5,6 +5,12 @@ RSpec.describe BdAssistantApiSchema do
     expect(described_class.to_definition).to eq(Rails.root.join("schema.graphql").read)
   end
 
+  it "answers the full introspection query that GraphQL clients like Postman send" do
+    result = described_class.execute(GraphQL::Introspection::INTROSPECTION_QUERY).to_h
+
+    expect(result["errors"]).to be_nil
+  end
+
   describe "error handling" do
     # A copy of the schema with two fields that fail on purpose. It inherits
     # the real schema's rescue_from handlers, which is what's being tested.
