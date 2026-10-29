@@ -224,6 +224,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.7)
+    rack-attack (6.8.0)
+      rack (>= 1.0, < 4)
     rack-cors (3.0.0)
       logger
       rack (>= 3.0.14)
@@ -275,6 +277,8 @@ GEM
       prism (>= 1.6.0)
       rbs (>= 4.0.0)
       tsort
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
     redis-client (0.31.0)
       connection_pool
     regexp_parser (2.13.1)
@@ -405,8 +409,10 @@ DEPENDENCIES
   pagy (~> 43.7)
   pg (~> 1.1)
   puma (>= 5.0)
+  rack-attack (~> 6.8)
   rack-cors (~> 3.0)
   rails (~> 8.1.4)
+  redis (~> 5.4)
   rspec-rails (~> 8.0)
   rubocop
   rubocop-factory_bot
