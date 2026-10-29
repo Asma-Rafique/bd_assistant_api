@@ -4,6 +4,7 @@ module Mutations
       description "Sets a new password with the token from the reset email, signs out every device and signs in"
 
       allow_unauthenticated!
+      rate_limit to: 10, within: 15.minutes
 
       argument :reset_password_attributes, Types::Auth::ResetPasswordAttributesInput,
                description: "Token and new password"
