@@ -41,6 +41,7 @@ en:
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
     invitation_count: "Invite between 1 and %{count} email addresses at a time."
     emails_taken: "These emails already have an account: %{emails}."
+    rate_limited: "Too many attempts. Please wait a few minutes and try again."
   auth:
     logged_out: "You have been logged out."
     password_reset_requested: "If an account exists for that email, we've sent a link to reset the password."
