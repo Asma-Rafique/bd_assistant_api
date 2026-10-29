@@ -1,2 +1,12 @@
-#!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+#!/usr/bin/env sh
+# Starts every process in Procfile.dev (the API and Sidekiq) in one terminal.
+# Ctrl+C stops them all.
+
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+# --env /dev/null: dotenv-rails already loads .env, so foreman shouldn't as well.
+export PORT="${PORT:-3000}"
+exec foreman start -f Procfile.dev --env /dev/null "$@"
