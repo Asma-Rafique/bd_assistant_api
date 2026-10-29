@@ -4,4 +4,5 @@
 Rails.application.config.filter_parameters += %i[
   query variables operations
   passw email secret token _key crypt salt certificate otp ssn cvv cvc
+  first_name last_name full_name
 ]
