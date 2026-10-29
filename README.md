@@ -4,6 +4,69 @@ This repository is the boilerplate it's built on: sign-in, user management, invi
 
 Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · ActionPolicy · Sidekiq and Redis · RSpec
 
+## Features
+
+16 GraphQL operations (5 queries and 11 mutations), listed in full under [API](#api).
+
+### Authentication
+- **Login** (`loginUser`) with email and password. It returns a bearer token for the `Authorization` header.
+- **Logout** (`logout`) ends the current session at once.
+- **Current user** (`currentUser`) tells the app who's signed in.
+- **Sessions expire** after 7 days, or after 2 days of not being used.
+- **Archived accounts are blocked** from signing in, and their existing tokens stop working.
+
+### Passwords
+- **Forgot password** (`sendResetPasswordInstructions`) emails a reset link.
+- **Reset password** (`resetPassword`) sets a new password from the link (valid for 15 minutes, single use), then signs the user in.
+- **Change password** (`updatePassword`) while signed in, which needs the current password.
+- **Changing or resetting a password signs out other devices.**
+- **Password rules:** at least 8 characters, with uppercase, lowercase and a special character.
+
+### Profile
+- **Update a profile** (`updateUser`): first and last name.
+
+### User management (super admin)
+- **List users** (`allUsers`): search by name or email, filter by role or archived status, newest first, paginated.
+- **View one user** (`fetchUser`). Team members can view only themselves.
+- **Update another user's profile** (`updateUser` with an `id`).
+- **Archive or restore a user** (`archiveUser`). Archiving signs them out everywhere.
+
+### Invitations (super admin)
+- **Invite users** (`createInvitation`): up to 20 emails at once, with a role, all or nothing.
+- **Resend an invitation** (`resendInvitation`) with a fresh link.
+- **Cancel an invitation** (`deleteInvitation`), which removes the pending account.
+- **Check an invitation link** (`validateInvitationToken`), for the frontend's "set your password" page.
+- **Accept an invitation** (`acceptInvitation`): set a password and sign in. The link is valid for 7 days and works once.
+
+### Roles and permissions
+- **Two roles:** super admin and team member.
+- **Team members** see and edit only their own account.
+- **Super admins** manage everyone except themselves, so they can't archive or lock themselves out.
+- **Records a user may not see answer `NOT_FOUND`**, so their existence isn't revealed.
+
+### Emails
+- **Password reset and invitation emails**, sent in the background by Sidekiq.
+- **In development, emails open in the browser** at `/letter_opener` instead of being sent.
+
+### Security
+- **Rate limits** on login, password reset, invitation acceptance and password change, plus a cap of 300 requests a minute per IP.
+- **Only token digests are stored**, so a database leak exposes no usable tokens.
+- **No account discovery:** login and password reset never reveal whether an email has an account.
+- **Query limits:** depth, complexity, size and a 10-second timeout.
+- **CORS** allows only the frontend's origins.
+- **Production:** HTTPS is enforced, only allowed host names are answered, slow database queries are cancelled, and passwords and tokens are kept out of the logs.
+- **Errors:** every error has a code, and internal details are never sent to the client.
+
+### Health check
+- **API status** (`apiStatus`) answers `"ok"`, for uptime checks.
+
+### Developer setup
+- **Seeds:** demo accounts in development, and the first super admin from environment variables.
+- **Local work:** `bin/setup` and `bin/dev`, or Docker Compose for the whole stack.
+- **Specs:** RSpec with a 95% coverage gate.
+- **CI:** GitHub Actions runs RuboCop, Brakeman, bundler-audit, the specs and a production boot check.
+- **Production image:** a Dockerfile for deploying, with web and worker processes.
+
 ## Setup
 
 You need only Docker. Everything else (Ruby, Postgres, Redis, Sidekiq) runs in containers.
