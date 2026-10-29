@@ -1,6 +1,6 @@
 # BD Assistant API
 
-The backend for BD Assistant, a tool that helps a business development team find, qualify and win client projects from freelance platforms. This repository is the boilerplate it's built on: sign-in, user management, invitations, permissions, rate limits and CI. The BD features (opportunities, scoring, proposals) come next.
+This repository is the boilerplate it's built on: sign-in, user management, invitations, permissions, rate limits and CI. The BD features (opportunities, scoring, proposals) come next.
 
 Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · ActionPolicy · Sidekiq and Redis · RSpec
 
