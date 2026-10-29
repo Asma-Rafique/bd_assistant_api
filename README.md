@@ -6,12 +6,21 @@ Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · Acti
 
 ## Setup
 
-You need Ruby 3.4.11 (see `.ruby-version`), PostgreSQL and Redis running locally.
+You need only Docker. Everything else (Ruby, Postgres, Redis, Sidekiq) runs in containers.
 
 ```bash
-bin/setup     # installs gems, creates .env, creates and seeds the database, then starts the app
-bin/dev       # later: starts the API and Sidekiq together (Ctrl+C stops both)
+docker compose build                                   # once
+docker compose run --rm web bin/setup --skip-server    # gems, .env, database and seeds
+docker compose run --rm -e RAILS_ENV=test web bin/rails db:prepare  # the test database
+docker compose up                                      # API and Sidekiq at http://localhost:3000
 ```
+
+Run any Rails command through the `web` container, such as `docker compose run --rm web bundle exec rspec`
+or `docker compose exec web bin/rails console`.
+
+Prefer Ruby on your machine? Install Ruby 3.4.11, run `docker compose up -d postgres redis`, set
+`DATABASE_URL=postgres://postgres:postgres@localhost:5433` and `REDIS_URL=redis://localhost:6380/0` in `.env`,
+then use `bin/setup` and `bin/dev`.
 
 The API runs at `http://localhost:3000/graphql`. Emails sent in development open at `http://localhost:3000/letter_opener`.
 
