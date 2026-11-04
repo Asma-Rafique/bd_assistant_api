@@ -35,6 +35,45 @@ RSpec.describe User do
     expect(build(:user, :archived)).not_to be_can_sign_in
   end
 
+  it "requires a password unless the invitation is pending" do
+    expect(build(:user, password: nil)).not_to be_valid
+    expect(build(:user, :invited)).to be_valid
+  end
+
+  describe "invitations" do
+    let(:user) { create(:user, :invited) }
+    let(:token) { user.generate_token_for(:invitation) }
+
+    it "can't sign in until the invitation is accepted" do
+      expect(user).not_to be_can_sign_in
+    end
+
+    it "finds the user by a valid invitation token" do
+      expect(described_class.find_by_invitation_token(token)).to eq(user)
+    end
+
+    it "stops finding the user once the invitation is resent" do
+      token
+      user.update!(invitation_sent_at: 1.second.from_now)
+
+      expect(described_class.find_by_invitation_token(token)).to be_nil
+    end
+
+    it "stops finding the user after 7 days" do
+      token
+
+      travel 7.days + 1.minute do
+        expect(described_class.find_by_invitation_token(token)).to be_nil
+      end
+    end
+
+    it "accepts with a strong password, which lets the user sign in" do
+      expect(user.accept_invitation(password: "N3w-passw0rd", password_confirmation: "N3w-passw0rd")).to be(true)
+      expect(user).to be_can_sign_in
+      expect(described_class.find_by_invitation_token(token)).to be_nil
+    end
+  end
+
   describe "#update_password" do
     let(:user) { create(:user) }
 

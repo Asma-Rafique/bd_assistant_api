@@ -1,0 +1,4 @@
+<p><%= @inviter_name ? t(".intro_with_inviter", inviter: @inviter_name) : t(".intro") %></p>
+<p><%= t(".instructions") %></p>
+<p><%= link_to t(".button"), @accept_url %></p>
+<p><%= t(".expiry", days: @valid_for_days) %></p>
