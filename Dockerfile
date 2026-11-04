@@ -1,10 +1,9 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# This Dockerfile is designed for production, not development. Build and run it by hand:
 # docker build -t bd_assistant_api .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name bd_assistant_api bd_assistant_api
-
+# docker run -d -p 80:80 -e SECRET_KEY_BASE=... -e DATABASE_URL=... -e REDIS_URL=... -e ALLOWED_HOSTS=... bd_assistant_api
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version

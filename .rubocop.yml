@@ -112,6 +112,7 @@ GraphQL/OrderedArguments:
 # GraphQL and request specs describe an API flow, not a Ruby class.
 RSpec/DescribeClass:
   Exclude:
+    - "spec/db/**/*"
     - "spec/graphql/mutations/**/*"
     - "spec/graphql/queries/**/*"
     - "spec/requests/**/*"

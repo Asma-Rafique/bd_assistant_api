@@ -9,7 +9,7 @@ class BdAssistantApiSchema < GraphQL::Schema
   use GraphQL::Schema::Timeout, max_seconds: 10
 
   # Limit the depth and size of incoming queries:
-  max_depth 12
+  max_depth 12, count_introspection_fields: false
   max_query_string_tokens(5000)
 
   # Stop validating when it encounters this many errors:
