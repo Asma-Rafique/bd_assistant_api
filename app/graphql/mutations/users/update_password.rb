@@ -3,6 +3,8 @@ module Mutations
     class UpdatePassword < BaseMutation
       description "Changes the signed-in user's password and signs out their other devices"
 
+      rate_limit to: 5, within: 15.minutes, by: ->(_arguments) { current_user.id }
+
       argument :update_password_attributes, Types::Users::UpdatePasswordAttributesInput,
                description: "Current and new password"
 

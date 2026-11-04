@@ -4,6 +4,7 @@ module Mutations
       description "Sets the password for an invited account with the token from the email, and signs in"
 
       allow_unauthenticated!
+      rate_limit to: 10, within: 15.minutes
 
       argument :accept_invitation_attributes, Types::Auth::AcceptInvitationAttributesInput,
                description: "Token and password"

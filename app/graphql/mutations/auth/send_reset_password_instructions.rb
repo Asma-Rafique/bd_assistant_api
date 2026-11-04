@@ -4,6 +4,8 @@ module Mutations
       description "Emails a password reset link when the account exists. Continue with resetPassword."
 
       allow_unauthenticated!
+      rate_limit to: 5, within: 1.hour, by: ->(arguments) { arguments[:email] }
+      rate_limit to: 10, within: 1.hour
 
       argument :email, String, description: "Account email address, in any letter case"
 

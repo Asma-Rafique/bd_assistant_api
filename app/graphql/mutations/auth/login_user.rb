@@ -4,6 +4,8 @@ module Mutations
       description "Signs in with email and password, and returns a bearer token for the Authorization header"
 
       allow_unauthenticated!
+      rate_limit to: 10, within: 15.minutes, by: ->(arguments) { arguments[:login_attributes][:email] }
+      rate_limit to: 30, within: 15.minutes
 
       argument :login_attributes, Types::Auth::LoginAttributesInput, description: "Email and password"
 

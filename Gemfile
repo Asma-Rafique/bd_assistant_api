@@ -36,8 +36,10 @@ gem "bcrypt", "~> 3.1"
 
 gem "graphql", "~> 2.6" # the GraphQL API
 
+gem "rack-attack", "~> 6.8" # per-IP request limits
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors", "~> 3.0"
+gem "redis", "~> 5.4" # Rails.cache in production (rate-limit counters)
 gem "sidekiq", "~> 8.1" # background jobs, such as sending email; needs Redis
 gem "strong_migrations", "~> 2.8"
 

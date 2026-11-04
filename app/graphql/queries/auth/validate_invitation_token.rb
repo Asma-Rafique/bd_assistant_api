@@ -4,6 +4,7 @@ module Queries
       description "Checks an invitation link before the frontend shows the set-password form"
 
       allow_unauthenticated!
+      rate_limit to: 30, within: 15.minutes
 
       type Types::Auth::InvitationTokenValidationType, null: false
 

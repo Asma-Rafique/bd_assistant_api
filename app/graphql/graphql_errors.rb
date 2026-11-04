@@ -15,6 +15,10 @@ module GraphqlErrors
     build(I18n.t("errors.not_found"), :not_found, resource: resource)
   end
 
+  def rate_limited
+    build(I18n.t("errors.rate_limited"), :rate_limited)
+  end
+
   def internal
     build(I18n.t("errors.internal"), :internal)
   end
