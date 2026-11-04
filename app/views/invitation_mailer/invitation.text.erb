@@ -1,0 +1,7 @@
+<%= @inviter_name ? t(".intro_with_inviter", inviter: @inviter_name) : t(".intro") %>
+
+<%= t(".instructions") %>
+
+<%= @accept_url %>
+
+<%= t(".expiry", days: @valid_for_days) %>

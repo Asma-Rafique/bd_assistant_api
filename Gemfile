@@ -41,6 +41,7 @@ gem "rack-cors", "~> 3.0"
 gem "sidekiq", "~> 8.1" # background jobs, such as sending email; needs Redis
 gem "strong_migrations", "~> 2.8"
 
+gem "pagy", "~> 43.7" # pagination for list queries
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"

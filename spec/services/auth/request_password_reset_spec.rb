@@ -20,4 +20,10 @@ RSpec.describe Auth::RequestPasswordReset do
 
     expect { described_class.call(email: "sam@example.com") }.not_to have_enqueued_mail
   end
+
+  it "sends nothing to an invited user, who must use the invitation link" do
+    create(:user, :invited, email: "new@example.com")
+
+    expect { described_class.call(email: "new@example.com") }.not_to have_enqueued_mail
+  end
 end
