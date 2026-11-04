@@ -84,17 +84,12 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# One database in production. The host sets DATABASE_URL (Render does), which
+# Rails merges into these settings and which wins over them.
 production:
-  primary: &primary_production
-    <<: *default
-    database: bd_assistant_api_production
-    username: bd_assistant_api
-    password: <%= ENV["BD_ASSISTANT_API_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: bd_assistant_api_production_cache
-    migrations_paths: db/cache_migrate
-  cable:
-    <<: *primary_production
-    database: bd_assistant_api_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  database: bd_assistant_api_production
+  variables:
+    # A query that runs longer is cancelled, so one slow query can't hold a
+    # connection (and its locks) forever.
+    statement_timeout: 15s
