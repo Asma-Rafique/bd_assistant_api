@@ -33,3 +33,7 @@
 /config/*.key
 
 /CLAUDE.md
+
+# Spec run results (rspec --only-failures) and coverage reports.
+/spec/examples.txt
+/coverage/

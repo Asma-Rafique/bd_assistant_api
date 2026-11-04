@@ -67,6 +67,13 @@ group :development, :test do
   gem "rubocop-rspec_rails", require: false
 end
 
+group :test do
+  # Line coverage report, on when RUN_COVERAGE is set (CI sets it).
+  gem "simplecov", "~> 1.3", require: false
+  # Blocks real HTTP from specs, so an unstubbed API call fails instead of going out.
+  gem "webmock", "~> 3.25"
+end
+
 group :development do
   gem "letter_opener_web", "~> 3.0"
 end

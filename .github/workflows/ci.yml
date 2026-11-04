@@ -50,3 +50,46 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+  test:
+    runs-on: ubuntu-latest
+
+    # A throwaway Postgres for this job only, on the runner's localhost:5432.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      RAILS_ENV: test
+      # Merged with config/database.yml, which still names the test database.
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+      RUN_COVERAGE: "true"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Create the test database
+        run: bin/rails db:prepare
+
+      - name: Run specs
+        run: bundle exec rspec
+
+      # Production-only settings (the Redis cache, ALLOWED_HOSTS) never load in
+      # specs. Booting with eager loading catches a missing gem or constant.
+      - name: Boot in production mode
+        env:
+          RAILS_ENV: production
+          SECRET_KEY_BASE_DUMMY: "1"
+          ALLOWED_HOSTS: ci.example.com
+        run: bin/rails runner 'Rails.application.eager_load!; puts Rails.cache.class'
