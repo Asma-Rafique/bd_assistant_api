@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   EMAIL_MAX_LENGTH = 254
   INVITATION_TTL = 7.days
+  # Onboarding steps, in order, and the fields each needs (see User::Onboarding).
+  ONBOARDING_STEPS = { step1: %i[first_name last_name] }.freeze
 
   # Invited users have no password until they accept, so the built-in
   # presence check is replaced by password_must_be_set below.
@@ -33,6 +35,7 @@ class User < ApplicationRecord
   end
 
   def full_name = [first_name, last_name].compact.join(" ").presence
+  def onboarding = Onboarding.new(self)
 
   def archived? = archived_at.present?
   def invitation_pending? = invitation_sent_at.present? && invitation_accepted_at.nil?
