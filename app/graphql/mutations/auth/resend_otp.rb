@@ -1,7 +1,7 @@
 module Mutations
   module Auth
     class ResendOtp < BaseMutation
-      description "Emails a new code for a sign-in in progress. The previous code stops working."
+      description "Emails a new code for a sign-in or password reset in progress. The previous code stops working."
 
       allow_unauthenticated!
       rate_limit to: 5, within: 15.minutes, by: ->(arguments) { arguments[:email] }

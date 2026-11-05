@@ -1,5 +1,6 @@
 module Auth
-  # Always succeeds, so the answer never reveals whether an account exists.
+  # Emails a password reset code. Always succeeds, so the answer never reveals
+  # whether an account exists.
   class RequestPasswordReset < ApplicationService
     def initialize(email:)
       @email = email
@@ -7,7 +8,7 @@ module Auth
 
     def call
       user = User.find_by(email: @email)
-      UserMailer.with(user:).password_reset.deliver_later if user&.can_sign_in?
+      OneTimePasswords::SendCode.call(user:, purpose: :password_reset) if user&.can_sign_in?
       success
     end
   end

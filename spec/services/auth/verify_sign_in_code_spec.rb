@@ -56,4 +56,22 @@ RSpec.describe Auth::VerifySignInCode do
 
     expect(verify(code).error.code).to eq(:sign_in_blocked)
   end
+
+  context "with a password reset code" do
+    let!(:reset_code) { OneTimePassword.issue!(user:, purpose: :password_reset) }
+
+    def verify_reset(entered) = described_class.call(email: "sam@example.com", code: entered, purpose: "password_reset")
+
+    it "returns a token that finds the user, without signing in" do
+      result = verify_reset(reset_code)
+
+      expect(User.find_by_password_reset_token(result.value.password_reset_token)).to eq(user)
+      expect(result.value.session).to be_nil
+      expect(Session.count).to eq(0)
+    end
+
+    it "doesn't accept the login code" do
+      expect(verify_reset(code).error.code).to eq(:invalid_code)
+    end
+  end
 end

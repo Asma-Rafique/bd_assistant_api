@@ -11,8 +11,8 @@ module Types
     field :logout, mutation: Mutations::Auth::Logout
     field :resend_invitation, mutation: Mutations::Invitations::ResendInvitation
     field :resend_otp, mutation: Mutations::Auth::ResendOtp
-    field :reset_password, mutation: Mutations::Auth::ResetPassword
     field :send_reset_password_instructions, mutation: Mutations::Auth::SendResetPasswordInstructions
+    field :set_password, mutation: Mutations::Auth::SetPassword
     field :update_otp_setting, mutation: Mutations::Users::UpdateOtpSetting
     field :update_password, mutation: Mutations::Users::UpdatePassword
     field :update_user, mutation: Mutations::Users::UpdateUser

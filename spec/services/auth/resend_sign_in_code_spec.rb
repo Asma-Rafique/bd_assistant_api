@@ -25,6 +25,6 @@ RSpec.describe Auth::ResendSignInCode do
 
     result = nil
     expect { result = resend }.not_to have_enqueued_mail
-    expect(result.error).to have_attributes(code: :invalid_code, message: I18n.t("errors.login_code_not_pending"))
+    expect(result.error).to have_attributes(code: :invalid_code, message: I18n.t("errors.code_not_pending"))
   end
 end
