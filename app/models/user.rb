@@ -39,6 +39,12 @@ class User < ApplicationRecord
   def invitation_acceptable? = invitation_pending? && !archived?
   def can_sign_in? = !archived? && !invitation_pending?
 
+  # Records the sign-in and starts a session for this device.
+  def sign_in!
+    touch(:last_sign_in_at)
+    Session.start_for!(self)
+  end
+
   # Changes the password and signs out every other device, so a stolen token
   # stops working along with the old password.
   def update_password(password:, password_confirmation:, keep_session: nil)

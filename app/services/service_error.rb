@@ -2,8 +2,10 @@
 # extensions.code, so it is part of the API contract.
 class ServiceError < Data.define(:code, :message, :field_errors)
   CODES = %i[
+    invalid_code
     invalid_credentials
     invalid_token
+    rate_limited
     sign_in_blocked
     validation_failed
   ].freeze

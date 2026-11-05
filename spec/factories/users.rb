@@ -10,6 +10,10 @@ FactoryBot.define do
       role { :super_admin }
     end
 
+    trait :otp_enabled do
+      otp_enabled { true }
+    end
+
     trait :archived do
       archived_at { 1.day.ago }
     end
