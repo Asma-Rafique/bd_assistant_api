@@ -1,7 +1,7 @@
 module Mutations
   module Auth
     class SendResetPasswordInstructions < BaseMutation
-      description "Emails a password reset link when the account exists. Continue with resetPassword."
+      description "Emails a password reset code when the account exists. Continue with validateOtp."
 
       allow_unauthenticated!
       rate_limit to: 5, within: 1.hour, by: ->(arguments) { arguments[:email] }
