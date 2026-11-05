@@ -1,0 +1,5 @@
+<p><%= t(".greeting", name: @user.first_name || @user.email) %></p>
+<p><%= t(".intro.#{@purpose}") %></p>
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 6px;"><%= @code %></p>
+<p><%= t(".expiry", minutes: @minutes) %></p>
+<p><%= t(".ignore") %></p>

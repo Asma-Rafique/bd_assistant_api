@@ -1,0 +1,8 @@
+<%= t(".greeting", name: @user.first_name || @user.email) %>
+
+<%= t(".intro.#{@purpose}") %>
+
+<%= @code %>
+
+<%= t(".expiry", minutes: @minutes) %>
+<%= t(".ignore") %>

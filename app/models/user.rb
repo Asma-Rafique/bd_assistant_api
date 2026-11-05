@@ -6,6 +6,7 @@ class User < ApplicationRecord
   # presence check is replaced by password_must_be_set below.
   has_secure_password validations: false
   has_many :sessions, dependent: :delete_all
+  has_many :one_time_passwords, dependent: :delete_all
   belongs_to :invited_by, class_name: "User", optional: true
 
   enum :role, { team_member: 0, super_admin: 1 }, validate: true

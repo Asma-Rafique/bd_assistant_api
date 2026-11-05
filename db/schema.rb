@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_111305) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "one_time_passwords", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "purpose", null: false
+    t.string "code_digest", null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_one_time_passwords_on_expires_at"
+    t.index ["user_id", "purpose"], name: "index_one_time_passwords_on_user_id_and_purpose", unique: true
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -46,6 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_111305) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
   end
 
+  add_foreign_key "one_time_passwords", "users", on_delete: :cascade
   add_foreign_key "sessions", "users", on_delete: :cascade
   add_foreign_key "users", "users", column: "invited_by_id", on_delete: :nullify
 end
