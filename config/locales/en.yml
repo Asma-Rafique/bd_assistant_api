@@ -65,7 +65,17 @@ en:
       intro: "Someone asked to reset the password for your account. Use the link below to choose a new one."
       button: "Reset my password"
       expiry: "The link works for 15 minutes, and only once."
-      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."      
+      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."
+    verification_code:
+      subject:
+        login: "Your BD Assistant sign-in code"
+        password_reset: "Your BD Assistant password reset code"
+      greeting: "Hi %{name},"
+      intro:
+        login: "Use this code to finish signing in:"
+        password_reset: "Use this code to reset your password:"
+      expiry: "The code works for %{minutes} minutes."
+      ignore: "If you didn't ask for this, you can ignore this email."
   activerecord:
     errors:
       messages:
