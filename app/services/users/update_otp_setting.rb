@@ -13,7 +13,12 @@ module Users
         return failure(:invalid_credentials, I18n.t("errors.current_password_invalid"))
       end
 
-      @user.update!(otp_enabled: @enabled)
+      # Turning codes off also ends a sign-in waiting for one, so a code
+      # already emailed can't be used afterwards.
+      @user.transaction do
+        @user.update!(otp_enabled: @enabled)
+        @user.one_time_passwords.login.delete_all unless @enabled
+      end
       success(@user)
     end
   end

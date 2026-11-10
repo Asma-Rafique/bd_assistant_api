@@ -51,8 +51,20 @@ RSpec.describe Auth::VerifySignInCode do
     expect(verify(code, email: "nobody@example.com").error.code).to eq(:invalid_code)
   end
 
-  it "refuses a user archived after the code was sent" do
-    user.archive!
+  it "gives no session when another request used the code first" do
+    # The second of two simultaneous requests: it found the code, but by the
+    # time it holds the lock the first one has used it.
+    allow(OneTimePassword).to receive(:pending_for).and_wrap_original do |original, *args, **kwargs|
+      original.call(*args, **kwargs).tap { OneTimePassword.where(id: it.id).delete_all }
+    end
+
+    expect(verify(code).error.code).to eq(:invalid_code)
+    expect(Session.count).to eq(0)
+  end
+
+  it "refuses a user who can no longer sign in" do
+    # archive! also deletes the code; this checks the guard behind it.
+    user.update!(archived_at: Time.current)
 
     expect(verify(code).error.code).to eq(:sign_in_blocked)
   end
