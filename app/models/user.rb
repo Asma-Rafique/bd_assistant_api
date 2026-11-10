@@ -55,11 +55,13 @@ class User < ApplicationRecord
     end
   end
 
-  # Signs the user out everywhere, so an archived account loses access at once.
+  # Signs the user out everywhere and deletes their codes, so an archived
+  # account loses access at once and can't be sent or use a code.
   def archive!
     transaction do
       update!(archived_at: Time.current)
       sessions.delete_all
+      one_time_passwords.delete_all
     end
   end
 
