@@ -38,6 +38,7 @@ en:
     invalid_credentials: "Invalid email or password."
     current_password_invalid: "Current password is incorrect."
     invalid_token: "This link is invalid or has expired. Please request a new one."
+    resend_cooldown: "Please wait a few seconds before asking for another code."
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
     invitation_count: "Invite between 1 and %{count} email addresses at a time."
     emails_taken: "These emails already have an account: %{emails}."

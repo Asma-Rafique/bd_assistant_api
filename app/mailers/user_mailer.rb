@@ -10,10 +10,13 @@ class UserMailer < ApplicationMailer
   end
 
   # Unlike the reset token, the code can't be made here: its digest is saved
-  # before the email is queued. EmailDeliveryJob keeps it out of the logs.
+  # before the email is queued. So it arrives encrypted, and an expired one
+  # (a retry that ran too late) sends nothing.
   def verification_code
     @user = params[:user]
-    @code = params[:code]
+    @code = OneTimePassword.decrypt_for_email(params[:encrypted_code])
+    return unless @code
+
     @purpose = params[:purpose]
     @minutes = OneTimePassword::TTL.in_minutes.to_i
 
