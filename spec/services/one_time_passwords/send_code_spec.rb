@@ -16,7 +16,7 @@ RSpec.describe OneTimePasswords::SendCode do
 
     expect { described_class.call(user:, purpose: :login) }.to have_enqueued_mail(UserMailer, :verification_code)
 
-    job_args = ActiveJob::Base.queue_adapter.enqueued_jobs.sole[:args]
+    job_args = ActiveJob::Base.queue_adapter.enqueued_jobs.last[:args]
     params = ActiveJob::Arguments.deserialize(job_args).last[:params]
     expect(job_args.to_json).not_to include("123456")
     expect(OneTimePassword.decrypt_for_email(params[:encrypted_code])).to eq("123456")
