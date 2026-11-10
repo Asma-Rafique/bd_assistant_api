@@ -17,6 +17,16 @@ RSpec.describe Users::UpdateOtpSetting do
     expect(user.reload.otp_enabled).to be(false)
   end
 
+  it "ends a sign-in waiting for a code when switched off, but keeps a password reset code" do
+    update(enabled: true)
+    OneTimePassword.issue!(user:, purpose: :login)
+    OneTimePassword.issue!(user:, purpose: :password_reset)
+
+    update(enabled: false)
+
+    expect(user.one_time_passwords.pluck(:purpose)).to eq(["password_reset"])
+  end
+
   it "refuses a wrong current password and changes nothing" do
     result = update(enabled: true, current_password: "Wrong-pass1")
 

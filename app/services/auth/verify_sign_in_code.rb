@@ -13,16 +13,29 @@ module Auth
 
     def call
       one_time_password = OneTimePassword.pending_for(@email, purpose: @purpose)
-      return code_rejected(one_time_password) unless one_time_password&.correct_code?(@code)
+      return code_rejected(nil) unless one_time_password
+
+      # The row lock makes a second request with the same code wait, then find
+      # the code gone, so only one gets a session or reset token. It also keeps
+      # parallel wrong guesses from each reading a stale count and slipping
+      # past the limit.
+      one_time_password.with_lock { verify(one_time_password) }
+    rescue ActiveRecord::RecordNotFound
+      code_rejected(nil)
+    end
+
+    private
+
+    def verify(one_time_password)
+      return code_rejected(one_time_password) unless one_time_password.correct_code?(@code)
 
       user = one_time_password.user
       return failure(:sign_in_blocked) unless user.can_sign_in?
 
+      outcome = one_time_password.login? ? sign_in(user) : password_reset(user)
       one_time_password.destroy!
-      success(one_time_password.login? ? sign_in(user) : password_reset(user))
+      success(outcome)
     end
-
-    private
 
     def sign_in(user) = Outcome.new(user:, session: user.sign_in!, password_reset_token: nil)
 
