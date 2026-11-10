@@ -42,10 +42,25 @@ class OneTimePassword < ApplicationRecord
     @digest_key ||= Rails.application.key_generator.generate_key("one_time_password")
   end
 
+  # The code reaches the email job encrypted, so Redis, where queued and
+  # retrying jobs wait, never holds a live code. The message expires with the
+  # code: decrypting a late retry's copy gives nil.
+  def self.encrypt_for_email(code) = email_encryptor.encrypt_and_sign(code, expires_in: TTL)
+  def self.decrypt_for_email(encrypted_code) = email_encryptor.decrypt_and_verify(encrypted_code)
+
+  def self.email_encryptor
+    @email_encryptor ||= ActiveSupport::MessageEncryptor.new(
+      Rails.application.key_generator.generate_key("one_time_password_email", ActiveSupport::MessageEncryptor.key_len)
+    )
+  end
+
   def issued_at = expires_at - TTL
   def expired? = expires_at.past?
   def locked? = failed_attempts >= MAX_FAILED_ATTEMPTS
-  def resendable? = issued_at <= RESEND_COOLDOWN.ago
+
+  # A code that can no longer be used is replaced at once; a working one only
+  # after the cooldown, so the email already sent keeps working.
+  def resendable? = expired? || locked? || issued_at <= RESEND_COOLDOWN.ago
 
   # A wrong guess is counted, so the code stops working after MAX_FAILED_ATTEMPTS
   # and can't be found by trying every number.
