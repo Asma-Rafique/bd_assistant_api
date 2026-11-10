@@ -90,6 +90,29 @@ RSpec.describe OneTimePassword do
         expect(login_code_record).to be_resendable
       end
     end
+
+    it "doesn't wait when the code is locked" do
+      login_code_record.update!(failed_attempts: OneTimePassword::MAX_FAILED_ATTEMPTS)
+
+      expect(login_code_record).to be_resendable
+    end
+  end
+
+  describe ".encrypt_for_email" do
+    it "hides the code, and gives it back when decrypted" do
+      encrypted_code = described_class.encrypt_for_email("042917")
+
+      expect(encrypted_code).not_to include("042917")
+      expect(described_class.decrypt_for_email(encrypted_code)).to eq("042917")
+    end
+
+    it "stops decrypting once the code itself would have expired" do
+      encrypted_code = described_class.encrypt_for_email("042917")
+
+      travel(OneTimePassword::TTL + 1.second) do
+        expect(described_class.decrypt_for_email(encrypted_code)).to be_nil
+      end
+    end
   end
 
   it "is deleted with its user" do
