@@ -4,7 +4,7 @@ RSpec.describe "acceptInvitation", type: :graphql do
   let(:mutation) do
     <<~GQL
       mutation($token: String!, $password: String!) {
-        acceptInvitation(input: { acceptInvitationAttributes: {
+        acceptInvitation(input: { setPasswordAttributes: {
           token: $token, password: $password, passwordConfirmation: $password
         } }) { token user { email invitationPending } }
       }
