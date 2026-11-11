@@ -103,6 +103,15 @@ RSpec.describe User do
       expect(user).not_to be_can_sign_in
       expect(user.sessions).to be_empty
     end
+
+    it "deletes the user's codes, so none can be resent or used" do
+      user = create(:user)
+      OneTimePassword.issue!(user:, purpose: :login)
+
+      user.archive!
+
+      expect(user.one_time_passwords).to be_empty
+    end
   end
 
   describe "#unarchive!" do

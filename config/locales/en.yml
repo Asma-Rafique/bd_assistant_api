@@ -38,6 +38,7 @@ en:
     invalid_credentials: "Invalid email or password."
     current_password_invalid: "Current password is incorrect."
     invalid_token: "This link is invalid or has expired. Please request a new one."
+    resend_cooldown: "Please wait a few seconds before asking for another code."
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
     invitation_count: "Invite between 1 and %{count} email addresses at a time."
     emails_taken: "These emails already have an account: %{emails}."
@@ -65,7 +66,17 @@ en:
       intro: "Someone asked to reset the password for your account. Use the link below to choose a new one."
       button: "Reset my password"
       expiry: "The link works for 15 minutes, and only once."
-      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."      
+      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."
+    verification_code:
+      subject:
+        login: "Your BD Assistant sign-in code"
+        password_reset: "Your BD Assistant password reset code"
+      greeting: "Hi %{name},"
+      intro:
+        login: "Use this code to finish signing in:"
+        password_reset: "Use this code to reset your password:"
+      expiry: "The code works for %{minutes} minutes."
+      ignore: "If you didn't ask for this, you can ignore this email."
   activerecord:
     errors:
       messages:
