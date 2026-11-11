@@ -6,10 +6,11 @@ Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · Acti
 
 ## Features
 
-16 GraphQL operations (5 queries and 11 mutations), listed in full under [API](#api).
+19 GraphQL operations (5 queries and 14 mutations), listed in full under [API](#api).
 
 ### Authentication
 - **Login** (`loginUser`) with email and password. It returns a bearer token for the `Authorization` header.
+- **Sign-in code** (`validateOtp`, `resendOtp`): for a user who has switched it on, login emails a 6-digit code instead of a token. The code works once, for 10 minutes, and locks after 5 wrong tries; a new one can be sent every 30 seconds.
 - **Logout** (`logout`) ends the current session at once.
 - **Current user** (`currentUser`) tells the app who's signed in.
 - **Sessions expire** after 7 days, or after 2 days of not being used.
@@ -24,6 +25,7 @@ Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · Acti
 
 ### Profile
 - **Update a profile** (`updateUser`): first and last name.
+- **Sign-in code setting** (`updateOtpSetting`): each user switches the emailed sign-in code on or off, which needs the current password. It's off for new users.
 
 ### User management (super admin)
 - **List users** (`allUsers`): search by name or email, filter by role or archived status, newest first, paginated.
@@ -124,7 +126,7 @@ Conventions: a service never knows about GraphQL; an operation never holds busin
 
 ## Authentication and roles
 
-- `loginUser` returns a bearer token. Send it as `Authorization: Bearer <token>`. Only a SHA-256 digest of the token is stored, and `logout` ends it at once.
+- `loginUser` returns a bearer token, or, for a user with the sign-in code switched on, emails a 6-digit code that `validateOtp` exchanges for the token. Send it as `Authorization: Bearer <token>`. Only a SHA-256 digest of the token is stored, and `logout` ends it at once.
 - Two roles: **team member** (sees and edits only their own account) and **super admin** (manages users and invitations, but never their own account, so an admin can't lock themselves out).
 - People join by invitation: a super admin invites by email, and the link (valid 7 days, single use) lets them set a password and signs them in.
 - Password reset works by emailed link (15 minutes, single use). Changing or resetting a password signs out other devices.
@@ -136,9 +138,10 @@ The full schema is in [`schema.graphql`](schema.graphql); a spec fails if it's o
 | Operation | Who | What it does |
 | --- | --- | --- |
 | `loginUser`, `logout` | anyone / signed in | Start or end a session |
+| `validateOtp`, `resendOtp` | anyone | Confirm the emailed sign-in code, or send a new one |
 | `sendResetPasswordInstructions`, `resetPassword` | anyone | Reset a forgotten password by email |
 | `validateInvitationToken`, `acceptInvitation` | anyone | Check an invitation link, then set a password |
-| `currentUser`, `updateUser`, `updatePassword` | signed in | Your own account |
+| `currentUser`, `updateUser`, `updatePassword`, `updateOtpSetting` | signed in | Your own account |
 | `fetchUser` | signed in | One user: yourself, or anyone for a super admin |
 | `allUsers` | super admin | Search, filter and page through users |
 | `archiveUser` | super admin | Switch an account off (signs it out) or back on |
@@ -154,6 +157,7 @@ Every error has a machine-readable `extensions.code`:
 | `NOT_FOUND` | Doesn't exist, or you're not allowed to know it does |
 | `VALIDATION_FAILED` | Bad input; `extensions.fieldErrors` lists each field |
 | `INVALID_CREDENTIALS` | Wrong email or password |
+| `INVALID_CODE` | Sign-in code is wrong, used, expired or locked, or no sign-in is in progress |
 | `INVALID_TOKEN` | Reset or invitation link is wrong, used or expired |
 | `SIGN_IN_BLOCKED` | The account is archived (an invited account that hasn't set a password gets `INVALID_CREDENTIALS`) |
 | `RATE_LIMITED` | Too many attempts; wait and retry |
