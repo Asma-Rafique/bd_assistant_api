@@ -86,6 +86,14 @@ test:
 #
 # One database in production. The host sets DATABASE_URL (Render does), which
 # Rails merges into these settings and which wins over them.
+# The dev server in AWS (deploy/dev). DATABASE_URL gives the connection; this
+# name is used when the URL has none.
+dev:
+  <<: *default
+  database: bd_assistant_api_dev
+  variables:
+    statement_timeout: 15s
+
 production:
   <<: *default
   database: bd_assistant_api_production
