@@ -13,6 +13,8 @@ module Types
                                           description: "True until an invited user sets their password"
       field :otp_enabled, Boolean, null: false,
                                    description: "True when sign-in asks for an emailed code after the password"
+      field :onboarding, OnboardingType, null: false,
+                                         description: "Onboarding progress: each step, and what to do next"
       field :archived_at, GraphQL::Types::ISO8601DateTime, description: "When the user was archived, or null"
       field :last_sign_in_at, GraphQL::Types::ISO8601DateTime, description: "When the user last signed in"
       field :created_at, GraphQL::Types::ISO8601DateTime, null: false, description: "When the account was created"

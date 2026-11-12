@@ -25,6 +25,7 @@ Rails 8.1 (API only) · Ruby 3.4 · PostgreSQL · GraphQL (graphql-ruby) · Acti
 
 ### Profile
 - **Update a profile** (`updateUser`): first and last name.
+- **Onboarding** (`currentUser { onboarding }`): after accepting an invitation, a user fills in their first and last name before using the app. Each step is complete once its fields are filled in, so nothing extra is stored; super admins skip it.
 - **Sign-in code setting** (`updateOtpSetting`): each user switches the emailed sign-in code on or off, which needs the current password. It's off for new users.
 
 ### User management (super admin)
