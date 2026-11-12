@@ -13,7 +13,7 @@ RSpec.describe InvitationMailer do
     end
 
     it "links to the frontend with a token that finds the user" do
-      token = mail.text_part.body.to_s[%r{/accept-invitation\?token=(\S+)}, 1]
+      token = mail.text_part.body.to_s[%r{/setup-account\?token=(\S+)}, 1]
 
       expect(User.find_by_invitation_token(CGI.unescape(token))).to eq(user)
     end
