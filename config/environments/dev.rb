@@ -46,8 +46,9 @@ Rails.application.configure do
   # Redis, so every server process shares one set of rate-limit counters.
   config.cache_store = :redis_cache_store, config.x.redis
 
-  # Host for URLs built in mailers: this server's name.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST") }
+  # Host for URLs built in mailers: this server's name. force_ssl already makes
+  # them https; saying so here keeps a reader from having to know that.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST"), protocol: "https" }
 
   # Email goes out through Amazon SES's SMTP interface; the credentials live in
   # the server's deploy/dev/.env, never in the repo.

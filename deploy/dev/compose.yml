@@ -12,7 +12,7 @@ x-app: &app
   env_file: .env
   environment:
     RAILS_ENV: dev
-    DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/dev/.env}@postgres:5432
+    DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/dev/.env}@postgres:5432/bd_assistant_api_dev
     REDIS_URL: redis://redis:6379/0
     ALLOWED_HOSTS: ${APP_HOST:?set APP_HOST in deploy/dev/.env}
     # Thruster gets and renews a Let's Encrypt certificate for this name.
