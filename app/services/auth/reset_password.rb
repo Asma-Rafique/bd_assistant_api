@@ -1,5 +1,5 @@
 module Auth
-  # Sets a new password from an emailed reset link, signs out every device and
+  # Sets a new password with the token from validateOtp, signs out every device and
   # starts a fresh session.
   class ResetPassword < ApplicationService
     def initialize(token:, password:, password_confirmation:)

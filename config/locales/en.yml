@@ -38,13 +38,20 @@ en:
     invalid_credentials: "Invalid email or password."
     current_password_invalid: "Current password is incorrect."
     invalid_token: "This link is invalid or has expired. Please request a new one."
+    invalid_code: "This code is wrong or has expired."
+    code_locked: "Too many wrong attempts. Please request a new code."
+    code_not_pending: "This code has expired. Please start again to get a new one."
+    resend_cooldown: "Please wait a few seconds before asking for another code."
     sign_in_blocked: "This account can no longer sign in. Please contact an admin."
     invitation_count: "Invite between 1 and %{count} email addresses at a time."
     emails_taken: "These emails already have an account: %{emails}."
     rate_limited: "Too many attempts. Please wait a few minutes and try again."
   auth:
     logged_out: "You have been logged out."
-    password_reset_requested: "If an account exists for that email, we've sent a link to reset the password."
+    signed_in: "You're signed in."
+    verification_code_sent: "We've emailed you a 6-digit code."
+    verification_code_resent: "We've emailed you a new code."
+    password_reset_requested: "If an account exists for that email, we've sent a code to reset the password."
   invitations:
     sent:
       one: "Invitation sent."
@@ -59,13 +66,16 @@ en:
       button: "Accept the invitation"
       expiry: "The link works for %{days} days."
   user_mailer:
-    password_reset:
-      subject: "Reset your BD Assistant password"
+    verification_code:
+      subject:
+        login: "Your BD Assistant sign-in code"
+        password_reset: "Your BD Assistant password reset code"
       greeting: "Hi %{name},"
-      intro: "Someone asked to reset the password for your account. Use the link below to choose a new one."
-      button: "Reset my password"
-      expiry: "The link works for 15 minutes, and only once."
-      ignore: "If you didn't ask for this, you can ignore this email. Your password won't change."      
+      intro:
+        login: "Use this code to finish signing in:"
+        password_reset: "Use this code to reset your password:"
+      expiry: "The code works for %{minutes} minutes."
+      ignore: "If you didn't ask for this, you can ignore this email."
   activerecord:
     errors:
       messages:

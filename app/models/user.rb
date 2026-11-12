@@ -1,11 +1,14 @@
 class User < ApplicationRecord
   EMAIL_MAX_LENGTH = 254
   INVITATION_TTL = 7.days
+  # Onboarding steps, in order, and the fields each needs (see User::Onboarding).
+  ONBOARDING_STEPS = { step1: %i[first_name last_name] }.freeze
 
   # Invited users have no password until they accept, so the built-in
   # presence check is replaced by password_must_be_set below.
   has_secure_password validations: false
   has_many :sessions, dependent: :delete_all
+  has_many :one_time_passwords, dependent: :delete_all
   belongs_to :invited_by, class_name: "User", optional: true
 
   enum :role, { team_member: 0, super_admin: 1 }, validate: true
@@ -32,11 +35,18 @@ class User < ApplicationRecord
   end
 
   def full_name = [first_name, last_name].compact.join(" ").presence
+  def onboarding = Onboarding.new(self)
 
   def archived? = archived_at.present?
   def invitation_pending? = invitation_sent_at.present? && invitation_accepted_at.nil?
   def invitation_acceptable? = invitation_pending? && !archived?
   def can_sign_in? = !archived? && !invitation_pending?
+
+  # Records the sign-in and starts a session for this device.
+  def sign_in!
+    touch(:last_sign_in_at)
+    Session.start_for!(self)
+  end
 
   # Changes the password and signs out every other device, so a stolen token
   # stops working along with the old password.
@@ -48,11 +58,13 @@ class User < ApplicationRecord
     end
   end
 
-  # Signs the user out everywhere, so an archived account loses access at once.
+  # Signs the user out everywhere and deletes their codes, so an archived
+  # account loses access at once and can't be sent or use a code.
   def archive!
     transaction do
       update!(archived_at: Time.current)
       sessions.delete_all
+      one_time_passwords.delete_all
     end
   end
 
