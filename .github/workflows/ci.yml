@@ -93,3 +93,11 @@ jobs:
           SECRET_KEY_BASE_DUMMY: "1"
           ALLOWED_HOSTS: ci.example.com
         run: bin/rails runner 'Rails.application.eager_load!; puts Rails.cache.class'
+
+      - name: Boot in dev mode
+        env:
+          RAILS_ENV: dev
+          SECRET_KEY_BASE_DUMMY: "1"
+          ALLOWED_HOSTS: ci.example.com
+          APP_HOST: ci.example.com
+        run: bin/rails runner 'Rails.application.eager_load!; puts Rails.cache.class'

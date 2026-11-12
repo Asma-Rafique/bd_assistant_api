@@ -1,0 +1,65 @@
+# The dev environment on one server: the API, the Sidekiq worker, PostgreSQL
+# and Redis. Settings come from deploy/dev/.env (cp .env.example deploy/dev/.env,
+# then fill it in). Run it through bin/dev-server, which passes that file along:
+#   bin/dev-server up -d --build      start, or update after git pull
+#   bin/dev-server logs -f web        follow the API's log
+#   bin/dev-server down               stop (the data stays in the volumes)
+name: bd_assistant_api_dev
+
+x-app: &app
+  # web and worker each build from the repo; their images share every layer.
+  build: ../..
+  env_file: .env
+  environment:
+    RAILS_ENV: dev
+    DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/dev/.env}@postgres:5432/bd_assistant_api_dev
+    REDIS_URL: redis://redis:6379/0
+    ALLOWED_HOSTS: ${APP_HOST:?set APP_HOST in deploy/dev/.env}
+    # Thruster gets and renews a Let's Encrypt certificate for this name.
+    TLS_DOMAIN: ${APP_HOST}
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+  restart: unless-stopped
+
+services:
+  web:
+    <<: *app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Keeps Thruster's certificate across restarts (storage/thruster).
+      - storage:/rails/storage
+
+  worker:
+    <<: *app
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      retries: 15
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    # Writes every change to disk, so queued jobs survive a restart.
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  storage:
+  postgres_data:
+  redis_data:

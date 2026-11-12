@@ -84,6 +84,14 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# The dev server in AWS. Its DATABASE_URL (deploy/dev/compose.yml) names the
+# database; the name here is only for a dev boot with no URL, such as CI's check.
+dev:
+  <<: *default
+  database: bd_assistant_api_dev
+  variables:
+    statement_timeout: 15s
+
 # One database in production. The host sets DATABASE_URL (Render does), which
 # Rails merges into these settings and which wins over them.
 production:

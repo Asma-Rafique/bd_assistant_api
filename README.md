@@ -180,7 +180,8 @@ Copy `.env.example` to `.env` (`bin/setup` does it). Development works with the 
 | `MAILER_SENDER` | all | The "from" address of emails |
 | `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD` | first deploy | `bin/rails db:seed` creates this super admin |
 | `GRAPHQL_INTROSPECTION` | optional | `true` turns schema introspection on in production |
-| `APP_HOST` | development | Host for URLs built in development |
+| `APP_HOST` | development, dev | Host for URLs built by the app; on the dev server, also its HTTPS name |
+| `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | dev | Amazon SES SMTP credentials for sending email |
 
 ## Running in production
 
@@ -192,3 +193,44 @@ The `Dockerfile` builds a production image. On start it runs `db:prepare` (migra
 Production forces HTTPS, answers only `ALLOWED_HOSTS`, caps each IP at 300 requests a minute, cancels queries that run over 15 seconds, and keeps credentials and personal data out of the logs.
 
 Not done yet, planned for the deploy: email delivery (SMTP settings in `config/environments/production.rb`), `trusted_proxies` for the host's load balancer, and an error tracker for `Rails.error`.
+## The dev environment (AWS)
+
+Besides `development` (a laptop), the app has a deployed **dev** environment: one EC2 server where the team tries the newest work. It runs with `RAILS_ENV=dev` and the settings in `config/environments/dev.rb`. Its files live in `deploy/dev/`:
+
+- `compose.yml`: the API (Puma behind Thruster, which gets an HTTPS certificate from Let's Encrypt), the Sidekiq worker, PostgreSQL and Redis
+- `.env`: the server's settings, copied from the root `.env.example` and filled in on the server; git ignores it
+
+`bin/dev-server` runs `docker compose` with those two files, so `bin/dev-server logs -f web` works like any compose command.
+
+### AWS setup, once
+
+1. **Billing alert:** Billing and Cost Management > Budgets, a monthly budget that emails you.
+2. **SES (email):** in your region, verify the sender's email address under Identities, and every address you'll send to while SES is in its sandbox. Under SMTP settings, create SMTP credentials and note the endpoint.
+3. **EC2:** Ubuntu Server 24.04, `t3.small` (2 GB of memory), 20 GB gp3 disk, a key pair. Security group: SSH (22) from your IP; HTTP (80) and HTTPS (443) from anywhere.
+4. **Elastic IP:** allocate one and associate it with the instance. With no domain, the server's name is the IP with dashes plus `.sslip.io`, such as `3-110-22-5.sslip.io`.
+
+### Server setup, once
+
+```bash
+ssh -i bd-assistant-dev.pem ubuntu@<elastic-ip>
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker ubuntu && exit          # log in again afterwards
+
+ssh-keygen -t ed25519 -N "" -C "bd-dev-server"  # add ~/.ssh/id_ed25519.pub to the repo's
+cat ~/.ssh/id_ed25519.pub                       # Settings > Deploy keys, read-only
+git clone git@github.com:Asma-Rafique/bd_assistant_api.git
+cd bd_assistant_api
+cp .env.example deploy/dev/.env                 # fill in APP_HOST and the super admin; uncomment
+                                                # and fill in the "Deployed servers only" block
+bin/dev-server up -d --build                    # builds, migrates, gets the certificate
+bin/dev-server exec web bin/rails db:seed       # the super admin; then delete its password from .env
+```
+
+Check `https://<name>/up` answers, then point the frontend's `VITE_APP_API_URL` at `https://<name>`.
+
+### Day to day
+
+- **Deploy:** `git pull && bin/dev-server up -d --build`
+- **Logs:** `bin/dev-server logs -f web` or `... -f worker`
+- **Rails console:** `bin/dev-server exec web bin/rails console`
+- **Save money:** stop the instance when nobody is testing; the data stays on its disk. When finished for good, terminate it and release the Elastic IP.

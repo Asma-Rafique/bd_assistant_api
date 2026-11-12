@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# docker compose for the dev server (deploy/dev), with its settings file.
+# Examples: bin/dev-server up -d --build, bin/dev-server logs -f web,
+#           bin/dev-server exec web bin/rails db:seed
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [ ! -f deploy/dev/.env ]; then
+  echo "Missing deploy/dev/.env: cp .env.example deploy/dev/.env and fill it in." >&2
+  exit 1
+fi
+
+exec docker compose --env-file deploy/dev/.env -f deploy/dev/compose.yml "$@"

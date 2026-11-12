@@ -12,6 +12,9 @@ CI.run do
   step "Production: boot",
        "RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 ALLOWED_HOSTS=ci.example.com " \
        "bin/rails runner 'Rails.application.eager_load!; puts Rails.cache.class'"
+  step "Dev: boot",
+       "RAILS_ENV=dev SECRET_KEY_BASE_DUMMY=1 ALLOWED_HOSTS=ci.example.com APP_HOST=ci.example.com " \
+       "bin/rails runner 'Rails.application.eager_load!; puts Rails.cache.class'"
   # Optional: set a green GitHub commit status to unblock PR merge.
   # Requires the `gh` CLI and `gh extension install basecamp/gh-signoff`.
   # if success?
