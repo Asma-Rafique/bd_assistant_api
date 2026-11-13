@@ -51,7 +51,7 @@ group :development, :test do
   gem "bullet", "~> 8.3"
   gem "dotenv-rails", "~> 3.1"
   gem "factory_bot_rails", "~> 6.5"
-  gem "rspec-rails", "~> 8.0"
+  gem "rspec-rails", "~> 8.1"
   gem "rubocop", require: false
   gem "rubocop-factory_bot", require: false
   gem "rubocop-graphql", require: false
